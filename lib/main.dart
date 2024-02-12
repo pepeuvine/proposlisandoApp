@@ -1,74 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:proposlisando_app/screens/homescreen.dart';
 
 void main(){
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget{
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Proposlisando APP"),
-        ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: SizedBox(
-                //height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0.0),
-                    ),
-                    backgroundColor: Colors.amber
-                  ),
-                  onPressed: (){},
-                  child: const Text("ORIGEM",style: TextStyle(fontWeight: FontWeight.bold),),
-                ),
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                //height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0.0),
-                    ),
-                    backgroundColor: Colors.grey
-                  ),
-                  onPressed: (){},
-                  child: const Text("PRODUÇÃO",style: TextStyle(fontWeight: FontWeight.bold),),
-                ),
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                //height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      backgroundColor: Colors.green
-                  ),
-                  onPressed: (){},
-                  child: const Text("ENTREPOSTO DE VENDAS",style: TextStyle(fontWeight: FontWeight.bold),),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      home: HomeScreen()
     );
   }
 
