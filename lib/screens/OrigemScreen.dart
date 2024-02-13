@@ -11,8 +11,8 @@ class OrigemScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Proposlisando APP - ORIGEM'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
           child: CrudOrigem(),
         ),
       ),
@@ -21,6 +21,8 @@ class OrigemScreen extends StatelessWidget {
 }
 
 class CrudOrigem extends StatefulWidget {
+  const CrudOrigem({super.key});
+
   @override
   OrigemState createState() => OrigemState();
 }
@@ -29,7 +31,7 @@ class OrigemState extends State<CrudOrigem> {
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-    final TextEditingController _distanceController = TextEditingController();
+  final TextEditingController _distanceController = TextEditingController();
 
   final vegetacaoOpcoes = [
     'mata de cocais',
@@ -86,7 +88,7 @@ class OrigemState extends State<CrudOrigem> {
           const Text("TIPO DE VEGETAÇÃO"),
           DropdownButton(
             items: vegetacaoOpcoes.map((String item) {
-              return DropdownMenuItem(child: Text(item), value: item);
+              return DropdownMenuItem(value: item, child: Text(item));
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
@@ -95,17 +97,25 @@ class OrigemState extends State<CrudOrigem> {
             },
             value: _dropdownvalue,
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           TextField(
             controller: _distanceController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Distãncia até o rio em KM.'),
+            decoration:
+                const InputDecoration(labelText: 'Distãncia até o rio em KM.'),
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           const Text("TIPO DE TERRA"),
           DropdownButton(
             items: terraOpcoes.map((String item) {
-              return DropdownMenuItem(child: Text(item), value: item);
+              return DropdownMenuItem(
+                value: item,
+                child: Text(item),
+              );
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
@@ -114,7 +124,10 @@ class OrigemState extends State<CrudOrigem> {
             },
             value: _dropdownvalue2,
           ),
-
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('CADASTRAR'),
+          ),
         ],
       ),
     );
@@ -128,7 +141,7 @@ class OrigemState extends State<CrudOrigem> {
         lastDate: DateTime.now());
 
     if (_picked != null) {
-      String formattedDate = "${_picked.day}-${_picked.month}-${_picked.year}";
+      String formattedDate = "${_picked.day}/${_picked.month}/${_picked.year}";
       setState(() {
         _dateController.text = formattedDate;
         //_picked.toString().split(" ")[0];
