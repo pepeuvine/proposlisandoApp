@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class EntrepostoScreen extends StatelessWidget {
   const EntrepostoScreen({super.key});
@@ -55,11 +57,57 @@ class EntrepostoState extends State<CrudEntreposto> {
             height: 10,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: _cadastrarDados,
             child: const Text('CADASTRAR'),
           ),
         ],
       ),
     );
+  }
+
+  void _cadastrarDados() {
+    String name = _nameController.text;
+    String cpf = _cpfController.text;
+
+    FirebaseFirestore.instance.collection('dadosEntreposto').add({
+      'nome': name,
+      'cpf': cpf,
+    }).then((value) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Sucesso'),
+            content: Text('Dados cadastrados com sucesso!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }).catchError((error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro'),
+            content: Text('Erro ao cadastrar dados: $error'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 }

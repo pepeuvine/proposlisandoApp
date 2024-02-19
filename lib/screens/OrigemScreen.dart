@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class OrigemScreen extends StatelessWidget {
   const OrigemScreen({super.key});
@@ -125,7 +127,7 @@ class OrigemState extends State<CrudOrigem> {
             value: _dropdownvalue2,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: _cadastrarDados,
             child: const Text('CADASTRAR'),
           ),
         ],
@@ -147,5 +149,57 @@ class OrigemState extends State<CrudOrigem> {
         //_picked.toString().split(" ")[0];
       });
     }
+  }
+
+  void _cadastrarDados() {
+    String number = _numberController.text;
+    String link = _linkController.text;
+    String date = _dateController.text;
+    String distance = _distanceController.text;
+
+    FirebaseFirestore.instance.collection('Banco de dados de apicultores').add({
+      'numero_caixa': number,
+      'link_georeferenciamento': link,
+      'data_coleta': date,
+      'tipo_vegetacao': _dropdownvalue,
+      'distancia_rio_km': distance,
+      'tipo_terra': _dropdownvalue2,
+    }).then((value) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Sucesso'),
+            content: Text('Dados cadastrados com sucesso!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }).catchError((error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro'),
+            content: Text('Erro ao cadastrar dados: $error'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 }

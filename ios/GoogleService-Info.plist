@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBHUKceNPf2795gs95gJItITc0Hk4oq9uo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>754599152402</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.proposlisandoApp</string>
+	<key>PROJECT_ID</key>
+	<string>banco-de-dados-de-apicultores</string>
+	<key>STORAGE_BUCKET</key>
+	<string>banco-de-dados-de-apicultores.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:754599152402:ios:eedc59bce8ceea4e2b01cb</string>
+</dict>
+</plist>
