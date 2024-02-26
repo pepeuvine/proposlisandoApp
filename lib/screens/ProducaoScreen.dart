@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class ProducaoScreen extends StatelessWidget {
   const ProducaoScreen({super.key});
 
@@ -12,6 +11,7 @@ class ProducaoScreen extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Proposlisando APP - PRODUÇÃO'),
+          backgroundColor: Colors.grey,
         ),
         body: const Padding(
           padding: EdgeInsets.all(16.0),
@@ -35,7 +35,6 @@ class ProducaoState extends State<CrudProducao> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,6 +59,11 @@ class ProducaoState extends State<CrudProducao> {
           ElevatedButton(
             onPressed: _cadastrarDados,
             child: const Text('CADASTRAR'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // Cor de fundo do botão
+              onPrimary: Colors.white, // Cor do texto do botão
+              padding: EdgeInsets.symmetric(vertical: 16), // Espaçamento interno do botão
+            ),
           ),
         ],
       ),
