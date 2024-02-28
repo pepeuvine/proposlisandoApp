@@ -211,7 +211,7 @@ class OrigemState extends State<CrudOrigem> {
             ),
             ElevatedButton(
               onPressed: () {
-                _exibirDadosPorCpf(_cpfController.text);
+                _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
               },
               child: const Text('BUSCAR'),
               style: ElevatedButton.styleFrom(
@@ -463,7 +463,7 @@ class OrigemState extends State<CrudOrigem> {
                             icon: const Icon(Icons.edit),
                             onPressed: () {
                               _editarDado(documentId, cpf, numero_caixa, link,
-                                  data, tipoVegetacao, distanciaRio, tipoTerra);
+                                  data, tipoVegetacao, distanciaRio, tipoTerra, tipoAbelha, tipoNomeCientifico);
                             },
                           ),
                           IconButton(
@@ -552,6 +552,8 @@ class OrigemState extends State<CrudOrigem> {
     String tipoVegetacaoAtual,
     String distanciaRioAtual,
     String tipoTerraAtual,
+    String tipoAbelha,
+    String tipoNomeCientifico
   ) {
     TextEditingController _cpfController = TextEditingController(text: cpf);
     TextEditingController _numberController =
@@ -589,6 +591,15 @@ class OrigemState extends State<CrudOrigem> {
                       controller: _linkController,
                       decoration: const InputDecoration(labelText: 'Link'),
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      controller: _distanciaRioController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                          labelText: 'Distância até o Rio em KM'),
+                    ),
                     TextField(
                       controller: _dataController,
                       onTap: () => _selectDate(_dataController),
@@ -624,15 +635,6 @@ class OrigemState extends State<CrudOrigem> {
                     const SizedBox(
                       height: 10,
                     ),
-                    TextField(
-                      controller: _distanciaRioController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: 'Distância até o Rio em KM'),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     const Text(
                       "Tipo de Terra",
                       style:
@@ -649,30 +651,92 @@ class OrigemState extends State<CrudOrigem> {
                       },
                       value: _valueTerra,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text("Tipo de Abelha:",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    DropdownButton(
+                      items: abelhaOpcoes.map((String item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _valueAbelha = newValue!;
+                        });
+                      },
+                      value: _valueAbelha,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text("Nome Científico: ",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    DropdownButton(
+                      items: nomeCientificoOpcoes.map((String item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _valueNomeCientifico = newValue!;
+                        });
+                      },
+                      value: _valueNomeCientifico,
+                    ),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () {
+                    if (!validarCPF(_cpfController)) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Erro'),
+                            content: const Text('CPF inválido!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
                     FirebaseFirestore.instance
                         .collection('Dados ORIGEM')
                         .doc(documentId)
                         .update({
-                      'cpf' : _cpfController.text,
+                      'cpf': _cpfController.text,
                       'numero_caixa': _numberController.text,
                       'link_georeferenciamento': _linkController.text,
                       'data_coleta': _dataController.text,
                       'tipo_vegetacao': _valueVegetacao,
                       'distancia_rio_km': _distanciaRioController.text,
                       'tipo_terra': _valueTerra,
+                      'tipo_abelha' : _valueAbelha,
+                      'tipo_nomeCientifico' : _valueNomeCientifico
                     }).then((value) {
+                      setState(() {},);
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
                       _exibirDadosPorCpf(cpf);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Dado atualizado com sucesso'),
+                        const SnackBar(
+                          content: Text('Dados atualizado com sucesso'),
                         ),
                       );
                     }).catchError((error) {
@@ -682,6 +746,7 @@ class OrigemState extends State<CrudOrigem> {
                         ),
                       );
                     });
+                    }
                   },
                   child: const Text('Salvar'),
                 ),
@@ -841,7 +906,7 @@ class OrigemState extends State<CrudOrigem> {
   }
 
   bool validarCPF(TextEditingController _cpfController) {
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (cpf.length != 11) {
       return false;

@@ -76,7 +76,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
           ),
           ElevatedButton(
             onPressed: () {
-              _exibirDadosPorCpf(_cpfController.text);
+              _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
             },
             child: const Text('BUSCAR'),
             style: ElevatedButton.styleFrom(
@@ -322,6 +322,25 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
               actions: [
                 TextButton(
                   onPressed: () {
+                    if (!validarCPF(_cpfController)) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Erro'),
+                            content: const Text('CPF inválido!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
                     FirebaseFirestore.instance
                         .collection('Dados ENTREPOSTO')
                         .doc(documentId)
@@ -344,6 +363,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
                         ),
                       );
                     });
+                    }
                   },
                   child: const Text('Salvar'),
                 ),
@@ -388,7 +408,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
     );
   }
 
-void _verificarNome() {
+  void _verificarNome() {
     String nome = _nameController.text;
     if (nome.isEmpty) {
       showDialog(
@@ -396,8 +416,8 @@ void _verificarNome() {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Nome inválido!'),
-            content: const Text(
-                'Por favor, preencha o nome com um nome válido.'),
+            content:
+                const Text('Por favor, preencha o nome com um nome válido.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -423,8 +443,7 @@ void _verificarNome() {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Nome já existente!'),
-              content:
-                  const Text('Já existe um cadastro com este nome.'),
+              content: const Text('Já existe um cadastro com este nome.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -443,7 +462,7 @@ void _verificarNome() {
   }
 
   bool validarCPF(TextEditingController _cpfController) {
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (cpf.length != 11) {
       return false;

@@ -79,7 +79,7 @@ class ProducaoState extends State<CrudProducao> {
           ),
           ElevatedButton(
             onPressed: () {
-              _exibirDadosPorCpf(_cpfController.text);
+              _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
             },
             child: const Text('BUSCAR'),
             style: ElevatedButton.styleFrom(
@@ -232,7 +232,7 @@ class ProducaoState extends State<CrudProducao> {
                         doc.get('quantidade_produzida').toString() ?? '';
 
                     return ListTile(
-                      title: Text('CPF: ${formatCPF(cpf)}'),
+                      title: Text('CPF: $cpf'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -310,7 +310,7 @@ class ProducaoState extends State<CrudProducao> {
         TextEditingController(text: numeroCaixa);
     TextEditingController _numberBoxController =
         TextEditingController(text: quantidadeCaixa);
-    ;
+
 
     showDialog(
       context: context,
@@ -343,29 +343,49 @@ class ProducaoState extends State<CrudProducao> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    FirebaseFirestore.instance
-                        .collection('Dados PRODUÇÃO')
-                        .doc(documentId)
-                        .update({
-                      'cpf': _cpfController.text,
-                      'numero_caixa': _numberController.text,
-                      'quantidade_produzida': _numberBoxController.text,
-                    }).then((value) {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                      _exibirDadosPorCpf(cpf);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Dados atualizado com sucesso'),
-                        ),
+                    if (!validarCPF(_cpfController)) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Erro'),
+                            content: const Text('CPF inválido!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Erro ao atualizar dado: $error'),
-                        ),
-                      );
-                    });
+                    } else {
+                      FirebaseFirestore.instance
+                          .collection('Dados PRODUÇÃO')
+                          .doc(documentId)
+                          .update({
+                        'cpf': _cpfController.text,
+                        'numero_caixa': _numberController.text,
+                        'quantidade_produzida': _numberBoxController.text,
+                      }).then((value) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        _exibirDadosPorCpf(cpf);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Dados atualizado com sucesso'),
+                          ),
+                        );
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Erro ao atualizar dado: $error'),
+                          ),
+                        );
+                      });
+                    }
                   },
                   child: const Text('Salvar'),
                 ),
@@ -385,7 +405,7 @@ class ProducaoState extends State<CrudProducao> {
 
 //VALIDAÇÕES
 
-void initState() {
+  void initState() {
     super.initState();
     _cpfController.addListener(_formatarCPF);
   }
@@ -407,16 +427,6 @@ void initState() {
       text: cpf,
       selection: TextSelection.collapsed(offset: cpf.length),
     );
-  }
-
-  String formatCPF(String cpf) {
-    return cpf.substring(0, 3) +
-        '.' +
-        cpf.substring(3, 6) +
-        '.' +
-        cpf.substring(6, 9) +
-        '-' +
-        cpf.substring(9);
   }
 
   void _verificarNumeroCaixa() {
@@ -505,7 +515,7 @@ void initState() {
   }
 
   bool validarCPF(TextEditingController _cpfController) {
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (cpf.length != 11) {
       return false;
