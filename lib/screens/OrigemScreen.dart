@@ -211,7 +211,7 @@ class OrigemState extends State<CrudOrigem> {
             ),
             ElevatedButton(
               onPressed: () {
-                _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
+                _exibirDadosPorCpf(_cpfController.text);
               },
               child: const Text('BUSCAR'),
               style: ElevatedButton.styleFrom(
@@ -243,7 +243,7 @@ class OrigemState extends State<CrudOrigem> {
 
 //FUNÇÃO CADASTRO - FUNÇÃO CADASTRO - FUNÇÃO CADASTRO - FUNÇÃO CADASTRO - FUNÇÃO CADASTRO - FUNÇÃO CADASTRO
   void _cadastrarDados() {
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
     String number = _numberController.text;
     String link = _linkController.text;
     String date = _dateController.text;
@@ -345,7 +345,7 @@ class OrigemState extends State<CrudOrigem> {
   Future<List<DocumentSnapshot>> _buscarDadosPorCpf(String cpf) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('Dados ORIGEM')
-        .where('cpf', isEqualTo: cpf)
+        .where('cpf', isEqualTo: cpf.replaceAll(RegExp(r'[^\d]'), ''))
         .get();
 
     return querySnapshot.docs;
@@ -394,9 +394,10 @@ class OrigemState extends State<CrudOrigem> {
                     String tipoAbelha = doc.get('tipo_abelha') ?? '';
                     String tipoNomeCientifico =
                         doc.get('tipo_nomeCientifico') ?? '';
+                    String cpfFormatado = _cpfFormatado(cpf);
 
                     return ListTile(
-                      title: Text('CPF: $cpf'),
+                      title: Text('CPF: $cpfFormatado'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -462,8 +463,17 @@ class OrigemState extends State<CrudOrigem> {
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
-                              _editarDado(documentId, cpf, numero_caixa, link,
-                                  data, tipoVegetacao, distanciaRio, tipoTerra, tipoAbelha, tipoNomeCientifico);
+                              _editarDado(
+                                  documentId,
+                                  cpf,
+                                  numero_caixa,
+                                  link,
+                                  data,
+                                  tipoVegetacao,
+                                  distanciaRio,
+                                  tipoTerra,
+                                  tipoAbelha,
+                                  tipoNomeCientifico);
                             },
                           ),
                           IconButton(
@@ -544,17 +554,16 @@ class OrigemState extends State<CrudOrigem> {
 //FUNÇÃO EDITAR - FUNÇÃO EDITAR - FUNÇÃO EDITAR - FUNÇÃO EDITAR - FUNÇÃO EDITAR - FUNÇÃO EDITAR - FUNÇÃO EDITAR
 
   void _editarDado(
-    String documentId,
-    String cpf,
-    String numeroCaixa,
-    String linkAtual,
-    String dataAtual,
-    String tipoVegetacaoAtual,
-    String distanciaRioAtual,
-    String tipoTerraAtual,
-    String tipoAbelha,
-    String tipoNomeCientifico
-  ) {
+      String documentId,
+      String cpf,
+      String numeroCaixa,
+      String linkAtual,
+      String dataAtual,
+      String tipoVegetacaoAtual,
+      String distanciaRioAtual,
+      String tipoTerraAtual,
+      String tipoAbelha,
+      String tipoNomeCientifico) {
     TextEditingController _cpfController = TextEditingController(text: cpf);
     TextEditingController _numberController =
         TextEditingController(text: numeroCaixa);
@@ -716,36 +725,38 @@ class OrigemState extends State<CrudOrigem> {
                         },
                       );
                     } else {
-                    FirebaseFirestore.instance
-                        .collection('Dados ORIGEM')
-                        .doc(documentId)
-                        .update({
-                      'cpf': _cpfController.text,
-                      'numero_caixa': _numberController.text,
-                      'link_georeferenciamento': _linkController.text,
-                      'data_coleta': _dataController.text,
-                      'tipo_vegetacao': _valueVegetacao,
-                      'distancia_rio_km': _distanciaRioController.text,
-                      'tipo_terra': _valueTerra,
-                      'tipo_abelha' : _valueAbelha,
-                      'tipo_nomeCientifico' : _valueNomeCientifico
-                    }).then((value) {
-                      setState(() {},);
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                      _exibirDadosPorCpf(cpf);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Dados atualizado com sucesso'),
-                        ),
-                      );
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Erro ao atualizar dado: $error'),
-                        ),
-                      );
-                    });
+                      FirebaseFirestore.instance
+                          .collection('Dados ORIGEM')
+                          .doc(documentId)
+                          .update({
+                        'cpf': _cpfController.text,
+                        'numero_caixa': _numberController.text,
+                        'link_georeferenciamento': _linkController.text,
+                        'data_coleta': _dataController.text,
+                        'tipo_vegetacao': _valueVegetacao,
+                        'distancia_rio_km': _distanciaRioController.text,
+                        'tipo_terra': _valueTerra,
+                        'tipo_abelha': _valueAbelha,
+                        'tipo_nomeCientifico': _valueNomeCientifico
+                      }).then((value) {
+                        setState(
+                          () {},
+                        );
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        _exibirDadosPorCpf(cpf);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Dados atualizado com sucesso'),
+                          ),
+                        );
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Erro ao atualizar dado: $error'),
+                          ),
+                        );
+                      });
                     }
                   },
                   child: const Text('Salvar'),
@@ -765,6 +776,16 @@ class OrigemState extends State<CrudOrigem> {
   }
 
 //VERIFICAÇÕES - VERIFICAÇÕES - VERIFICAÇÕES - VERIFICAÇÕES - VERIFICAÇÕES - VERIFICAÇÕES - VERIFICAÇÕES
+
+  String _cpfFormatado(String cpf) {
+    return cpf.substring(0, 3) +
+        '.' +
+        cpf.substring(3, 6) +
+        '.' +
+        cpf.substring(6, 9) +
+        '-' +
+        cpf.substring(9);
+  }
 
   void initState() {
     super.initState();

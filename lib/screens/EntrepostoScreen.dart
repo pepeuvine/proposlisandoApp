@@ -76,7 +76,8 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
           ),
           ElevatedButton(
             onPressed: () {
-              _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
+              _exibirDadosPorCpf(
+                  _cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
             },
             child: const Text('BUSCAR'),
             style: ElevatedButton.styleFrom(
@@ -94,7 +95,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
 
   void _cadastrarDados() {
     String name = _nameController.text;
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (!validarCPF(_cpfController)) {
       showDialog(
@@ -181,7 +182,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
   Future<List<DocumentSnapshot>> _buscarDadosPorCpf(String cpf) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('Dados ENTREPOSTO')
-        .where('cpf', isEqualTo: cpf)
+        .where('cpf', isEqualTo: cpf.replaceAll(RegExp(r'[^\d]'), ''))
         .get();
 
     return querySnapshot.docs;
@@ -221,10 +222,11 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
                   children: docs.map((doc) {
                     String documentId = doc.id;
                     String cpf = doc.get('cpf') ?? '';
+                    String cpfFormatado = _cpfFormatado(cpf);
                     String nome = doc.get('nome') ?? '';
 
                     return ListTile(
-                      title: Text('CPF: $cpf'),
+                      title: Text('CPF: $cpfFormatado'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -341,28 +343,28 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
                         },
                       );
                     } else {
-                    FirebaseFirestore.instance
-                        .collection('Dados ENTREPOSTO')
-                        .doc(documentId)
-                        .update({
-                      'cpf': _cpfController.text,
-                      'nome': _nameController.text,
-                    }).then((value) {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                      _exibirDadosPorCpf(cpf);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Dados atualizado com sucesso'),
-                        ),
-                      );
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Erro ao atualizar dado: $error'),
-                        ),
-                      );
-                    });
+                      FirebaseFirestore.instance
+                          .collection('Dados ENTREPOSTO')
+                          .doc(documentId)
+                          .update({
+                        'cpf': _cpfController.text,
+                        'nome': _nameController.text,
+                      }).then((value) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        _exibirDadosPorCpf(cpf);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Dados atualizado com sucesso'),
+                          ),
+                        );
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Erro ao atualizar dado: $error'),
+                          ),
+                        );
+                      });
                     }
                   },
                   child: const Text('Salvar'),
@@ -383,7 +385,17 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
 
 //VALIDAÇÕES
 
+  String _cpfFormatado(String cpf) {
+    return cpf.substring(0, 3) +
+        '.' +
+        cpf.substring(3, 6) +
+        '.' +
+        cpf.substring(6, 9) +
+        '-' +
+        cpf.substring(9);
+  }
 
+  @override
   void initState() {
     super.initState();
     _cpfController.addListener(_formatarCPF);

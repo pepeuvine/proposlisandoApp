@@ -79,7 +79,7 @@ class ProducaoState extends State<CrudProducao> {
           ),
           ElevatedButton(
             onPressed: () {
-              _exibirDadosPorCpf(_cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
+              _exibirDadosPorCpf(_cpfController.text);
             },
             child: const Text('BUSCAR'),
             style: ElevatedButton.styleFrom(
@@ -96,7 +96,7 @@ class ProducaoState extends State<CrudProducao> {
 //BANCO DE DADOS
 
   void _cadastrarDados() {
-    String cpf = _cpfController.text;
+    String cpf = _cpfController.text.replaceAll(RegExp(r'[^\d]'), '');
     String number = _numberController.text;
     String numberBox = _numberBoxController.text;
 
@@ -187,7 +187,7 @@ class ProducaoState extends State<CrudProducao> {
   Future<List<DocumentSnapshot>> _buscarDadosPorCpf(String cpf) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('Dados PRODUÇÃO')
-        .where('cpf', isEqualTo: cpf)
+        .where('cpf', isEqualTo: cpf.replaceAll(RegExp(r'[^\d]'), ''))
         .get();
 
     return querySnapshot.docs;
@@ -230,9 +230,10 @@ class ProducaoState extends State<CrudProducao> {
                     String numeroCaixa = doc.get('numero_caixa') ?? '';
                     String quantidadeCaixa =
                         doc.get('quantidade_produzida').toString() ?? '';
+                    String cpfFormatado = _cpfFormatado(cpf);
 
                     return ListTile(
-                      title: Text('CPF: $cpf'),
+                      title: Text('CPF: $cpfFormatado'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -310,7 +311,6 @@ class ProducaoState extends State<CrudProducao> {
         TextEditingController(text: numeroCaixa);
     TextEditingController _numberBoxController =
         TextEditingController(text: quantidadeCaixa);
-
 
     showDialog(
       context: context,
@@ -404,6 +404,15 @@ class ProducaoState extends State<CrudProducao> {
   }
 
 //VALIDAÇÕES
+  String _cpfFormatado(String cpf) {
+    return cpf.substring(0, 3) +
+        '.' +
+        cpf.substring(3, 6) +
+        '.' +
+        cpf.substring(6, 9) +
+        '-' +
+        cpf.substring(9);
+  }
 
   void initState() {
     super.initState();
