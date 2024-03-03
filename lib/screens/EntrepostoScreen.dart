@@ -79,7 +79,7 @@ class _CrudEntrepostoState extends State<CrudEntreposto> {
               _exibirDadosPorCpf(
                   _cpfController.text.replaceAll(RegExp(r'[^\d]'), ''));
             },
-            child: const Text('BUSCAR'),
+            child: const Text('BUSCAR POR CPF'),
             style: ElevatedButton.styleFrom(
               primary: Colors.grey[300],
               onPrimary: Colors.black,

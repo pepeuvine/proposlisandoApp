@@ -213,7 +213,7 @@ class OrigemState extends State<CrudOrigem> {
               onPressed: () {
                 _exibirDadosPorCpf(_cpfController.text);
               },
-              child: const Text('BUSCAR'),
+              child: const Text('BUSCAR POR CPF'),
               style: ElevatedButton.styleFrom(
                 primary: Colors.grey[300],
                 onPrimary: Colors.black,
