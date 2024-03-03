@@ -1,16 +1,6 @@
 # proposlisando_app
 
-A new Flutter project.
+**Proposlisando ®** - *APP de Gestão de Dados para Subsidiar o (Des)envolvimento Sustentável do Setor Produtivo de Mel e Própolis no Centro Maranhense.*  
+O aplicativo foi desenvolvido com a tecnologia Flutter e utilizou o Firebase como banco de dados.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
